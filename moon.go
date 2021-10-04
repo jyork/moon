@@ -66,9 +66,7 @@ func main() {
     defer file.Close()
     log.SetOutput(file)
 
-    homedir := os.Getenv("HOME")
-
-    cfg, err := ini.Load(homedir + "/config/moon.ini")
+    cfg, err := ini.Load("config/moon.ini")
     if err != nil {
         log.Fatalf("Fail to read file: %v", err)
         os.Exit(1)

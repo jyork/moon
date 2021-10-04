@@ -23,17 +23,26 @@ type MoonPhaseResponse struct {
 
 var router *mux.Router
 
+func parseDate(str string) time.Time {
+    if len(str) == 0 {
+        return time.Now()
+    }
+    date, err := dateparse.ParseAny(str)
+    if err != nil {
+        return time.Now()
+    }
+    return date
+}
+
 func moonHandler(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
 
     var results MoonPhaseResponse
     results.Method = r.Method
     results.URI = r.URL.String()
-  
-    date, err := dateparse.ParseAny(vars["date"])
-    if err != nil {
-        date = time.Now()
-    }
+
+    date := parseDate(vars["date"])
+    
     results.Date = date
     m := New(date)
     results.Phase = m.PhaseName()
@@ -80,6 +89,7 @@ func main() {
      */
     router = mux.NewRouter()
     router.HandleFunc("/moon.fcgi/moon/{date}", moonHandler)
+    router.HandleFunc("/moon.fcgi", moonHandler)
     http.HandleFunc("/", handler)
     //http.HandleFunc("/pokedex/", PokedexHandler)
     // This is what actually concurrently handles requests

@@ -15,10 +15,18 @@ import (
 )
 
 type MoonPhaseResponse struct {
-    Method string    `json:"method"`
-    URI    string    `json:"uri"`
-    Date   time.Time `json:"date"`
-    Phase  string    `json:"phase"`
+    Method       string    `json:"method"`
+    URI          string    `json:"uri"`
+    Date         time.Time `json:"date"`
+    Phase        string    `json:"phase"`
+    Illumination float64   `json:"Illumination"`
+    Age          float64   `json:"Age"`
+    Distance     float64   `json:"Distance"`
+    Diameter     float64   `json:"Diameter"`
+    SunDistance  float64   `json:"SunDistance"`
+    SunDiameter  float64   `json:"SunDiameter"`
+    NewMoon      float64   `json:"NewMoon"`
+    ZodiacSign   string    `json:"ZodiacSign"`
 }
 
 var router *mux.Router
@@ -46,6 +54,14 @@ func moonHandler(w http.ResponseWriter, r *http.Request) {
     results.Date = date
     m := New(date)
     results.Phase = m.PhaseName()
+    results.Illumination = m.Illumination()
+    results.Age = m.Age()
+    results.Distance = m.Distance()
+    results.Diameter = m.Diameter()
+    results.SunDistance = m.SunDistance()
+    results.SunDiameter = m.SunDiameter()
+    results.NewMoon = m.NewMoon()
+    results.ZodiacSign = m.ZodiacSign()
   
     b, err := json.MarshalIndent(results, "", "    ")
     if err != nil {

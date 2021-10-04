@@ -25,7 +25,8 @@ type MoonPhaseResponse struct {
     Diameter     float64   `json:"Diameter"`
     SunDistance  float64   `json:"SunDistance"`
     SunDiameter  float64   `json:"SunDiameter"`
-    NewMoon      float64   `json:"NewMoon"`
+    NextNewMoon  time.Time `json:"NextNewMoon"`
+    NextFullMoon time.Time `json:"NextFullMoon"`
     ZodiacSign   string    `json:"ZodiacSign"`
 }
 
@@ -60,7 +61,8 @@ func moonHandler(w http.ResponseWriter, r *http.Request) {
     results.Diameter = m.Diameter()
     results.SunDistance = m.SunDistance()
     results.SunDiameter = m.SunDiameter()
-    results.NewMoon = m.NewMoon()
+    results.NextNewMoon = time.Unix(int64(m.NextNewMoon()), 0)
+    results.NextFullMoon = time.Unix(int64(m.NextFullMoon()), 0)
     results.ZodiacSign = m.ZodiacSign()
   
     b, err := json.MarshalIndent(results, "", "    ")

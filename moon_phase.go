@@ -193,9 +193,9 @@ func utcToJulian(t float64) float64 {
     return t / 86400 + 2440587.5
 }
 
-func julianToUtc(t float64) float64 {
-    return t*86400 + 2440587.5
-}
+// func julianToUtc(t float64) float64 {
+//     return t*86400 + 2440587.5
+// }
 
 /**
     Calculates time of the mean new Moon for a given
@@ -210,11 +210,10 @@ func meanPhase(sdate float64, k float64) float64 {
     var t2 float64 = t * t
     var t3 float64 = t2 * t
 
-    var nt float64
-    nt = 2415020.75933 + synmonth * k +
+    nt := float64(2415020.75933 + synmonth * k +
         0.0001178 * t2 -
         0.000000155 * t3 +
-        0.00033 * sin( deg2rad( 166.56 + 132.87 * t - 0.009173 * t2))
+        0.00033 * sin( deg2rad( 166.56 + 132.87 * t - 0.009173 * t2)))
 
     return nt
 }

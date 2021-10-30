@@ -14,9 +14,7 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-type MoonPhaseResponse struct {
-    Method       string    `json:"method"`
-    URI          string    `json:"uri"`
+type MoonDatePhase struct {
     Date         time.Time `json:"date"`
     Phase        string    `json:"phase"`
     Illumination float64   `json:"Illumination"`
@@ -28,6 +26,12 @@ type MoonPhaseResponse struct {
     NextNewMoon  time.Time `json:"NextNewMoon"`
     NextFullMoon time.Time `json:"NextFullMoon"`
     ZodiacSign   string    `json:"ZodiacSign"`
+}
+
+type MoonPhaseResponse struct {
+    Method       string    `json:"method"`
+    URI          string    `json:"uri"`
+    PhaseDate    MoonDatePhase
 }
 
 var router *mux.Router
@@ -51,24 +55,26 @@ func moonHandler(w http.ResponseWriter, r *http.Request) {
     results.URI = r.URL.String()
 
     date := parseDate(vars["date"])
-    
-    results.Date = date
     m := New(date)
-    results.Phase = m.PhaseName()
-    results.Illumination = m.Illumination()
-    results.Age = m.Age()
-    results.Distance = m.Distance()
-    results.Diameter = m.Diameter()
-    results.SunDistance = m.SunDistance()
-    results.SunDiameter = m.SunDiameter()
-    results.NextNewMoon = time.Unix(int64(m.NextNewMoon()), 0)
-    results.NextFullMoon = time.Unix(int64(m.NextFullMoon()), 0)
-    results.ZodiacSign = m.ZodiacSign()
+    phase := MoonDatePhase{Date: date, Phase: m.PhaseName(),
+        Illumination: m.Illumination(), Age: m.Age(),
+        Distance: m.Distance(), Diameter: m.Diameter(),
+        SunDistance: m.SunDistance(), SunDiameter: m.SunDiameter(),
+        NextNewMoon: time.Unix(int64(m.NextNewMoon()), 0),
+        NextFullMoon: time.Unix(int64(m.NextFullMoon()), 0),
+        ZodiacSign: m.ZodiacSign()}
+
+    if _, ok := vars["html"]; ok {
+        moonHtmlHandler(w, r, phase)
+        return
+    }
+
+    results.PhaseDate = phase
   
     b, err := json.MarshalIndent(results, "", "    ")
     if err != nil {
-      http.Error(w, err.Error(), http.StatusInternalServerError)
-      return
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
     }
   
     w.WriteHeader(http.StatusOK)

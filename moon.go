@@ -31,6 +31,7 @@ type MoonDatePhase struct {
 type MoonPhaseResponse struct {
     Method       string    `json:"method"`
     URI          string    `json:"uri"`
+    Vars         string    `json:"vars"`
     PhaseDate    MoonDatePhase
 }
 
@@ -53,6 +54,10 @@ func moonHandler(w http.ResponseWriter, r *http.Request) {
     var results MoonPhaseResponse
     results.Method = r.Method
     results.URI = r.URL.String()
+    jsonVars, err := json.Marshal(vars)
+    if err != nil {
+        results.Vars = string(jsonVars)
+    }
 
     date := parseDate(vars["date"])
     m := New(date)

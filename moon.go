@@ -61,7 +61,8 @@ func moonHandler(w http.ResponseWriter, r *http.Request) {
     }
     queryParams := r.URL.Query()
     for key, value := range queryParams {
-        varStr += key + "=" + strings.Join(value, ",") + ", "
+        vars[key] = strings.Join(value, ",")
+        //varStr += key + "=" + strings.Join(value, ",") + ", "
     }
     results.Vars = varStr
 
@@ -75,11 +76,15 @@ func moonHandler(w http.ResponseWriter, r *http.Request) {
         NextFullMoon: time.Unix(int64(m.NextFullMoon()), 0),
         ZodiacSign: m.ZodiacSign()}
 
-    htmlParam := r.URL.Query().Get("html")
-    if htmlParam != "" {
+    if _, ok := vars["html"]; ok {
         moonHtmlHandler(w, r, phase)
         return
     }
+    // htmlParam := r.URL.Query().Get("html")
+    // if htmlParam != "" {
+    //     moonHtmlHandler(w, r, phase)
+    //     return
+    // }
 
     results.PhaseDate = phase
   

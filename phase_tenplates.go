@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 )
 
 type PhaseTemplateData struct {
@@ -26,7 +27,7 @@ const (
 )
 
 func PrepareData(input MoonDatePhase) PhaseTemplateData {
-    output := PhaseTemplateData{Phase: input.Phase, ZodiacSign: input.ZodiacSign}
+    output := PhaseTemplateData{Phase: input.Phase}
     output.Date = input.Date.Format(dateLayout)
     output.Illumination = fmt.Sprintf("%d%% of the surface", int(input.Illumination * 100))
     output.Age = fmt.Sprintf("%.1f days", input.Age)
@@ -38,6 +39,7 @@ func PrepareData(input MoonDatePhase) PhaseTemplateData {
     output.SunDiameter = fmt.Sprintf("%.2f", input.SunDiameter)
     output.NextNewMoon = input.NextNewMoon.Format(timeLayout)
     output.NextFullMoon = input.NextFullMoon.Format((timeLayout))
+    output.ZodiacSign = strings.Title(input.ZodiacSign)
 
     return output
 }

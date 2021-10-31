@@ -61,6 +61,14 @@ func get_minimal_template() string {
     <b>{{.Phase}}</b>
     <table>
         <tr><td>Illumination:</td><td>{{.Illumination}}</td></tr>
+        <tr><td>Next New Moon:</td><td>{{.NextNewMoon}}</td></tr>
+        <tr><td>Next Full Moon:</td><td>{{.NextFullMoon}}</td></tr>
+        <tr><td>Age:</td><td>{{.Age}}</td></tr>
+        <tr><td>Distance:</td><td>{{.Distance}}</td></tr>
+        <tr><td>Diameter:</td><td>{{.Diameter}}</td></tr>
+        <tr><td>Sun Distance:</td><td>{{.SunDistance}}</td></tr>
+        <tr><td>Sun Diameter:</td><td>{{.SunDiameter}}</td></tr>
+        <tr><td>ZodiacSign:</td><td>{{.ZodiacSign}}</td></tr>
     </table>
 </body>
 </html>

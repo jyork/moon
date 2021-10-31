@@ -70,7 +70,8 @@ func moonHandler(w http.ResponseWriter, r *http.Request) {
         NextFullMoon: time.Unix(int64(m.NextFullMoon()), 0),
         ZodiacSign: m.ZodiacSign()}
 
-    if _, ok := vars["html"]; ok {
+    htmlParam := r.URL.Query().Get("html")
+    if htmlParam != "" {
         moonHtmlHandler(w, r, phase)
         return
     }

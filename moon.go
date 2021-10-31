@@ -54,10 +54,11 @@ func moonHandler(w http.ResponseWriter, r *http.Request) {
     var results MoonPhaseResponse
     results.Method = r.Method
     results.URI = r.URL.String()
-    jsonVars, err := json.Marshal(vars)
-    if err != nil {
-        results.Vars = string(jsonVars)
+    varStr := ""
+    for key, value := range vars {
+        varStr += key + "=" + value + ", "
     }
+    results.Vars = varStr
 
     date := parseDate(vars["date"])
     m := New(date)

@@ -1,9 +1,46 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"net/http"
 )
+
+type PhaseTemplateData struct {
+    Date         string `json:"date"`
+    Phase        string `json:"phase"`
+    Illumination string `json:"Illumination"`
+    Age          string `json:"Age"`
+    Distance     string `json:"Distance"`
+    Diameter     string `json:"Diameter"`
+    SunDistance  string `json:"SunDistance"`
+    SunDiameter  string `json:"SunDiameter"`
+    NextNewMoon  string `json:"NextNewMoon"`
+    NextFullMoon string `json:"NextFullMoon"`
+    ZodiacSign   string `json:"ZodiacSign"`
+}
+
+const (
+    dateLayout = "January 2, 2006"
+    timeLayout = "January 2, 2006 at 12:04"
+)
+
+func PrepareData(input MoonDatePhase) PhaseTemplateData {
+    output := PhaseTemplateData{Phase: input.Phase, ZodiacSign: input.ZodiacSign}
+    output.Date = input.Date.Format(dateLayout)
+    output.Illumination = fmt.Sprintf("%d%% of the surface", int(input.Illumination * 100))
+    output.Age = fmt.Sprintf("%.1f days", input.Age)
+    output.Distance = fmt.Sprintf("%d miles (%d km)", 
+        int(input.Distance *  0.6214), int(input.Distance))
+    output.Diameter = fmt.Sprintf("%.2f", input.Diameter)
+    output.SunDistance = fmt.Sprintf("%d miles (%d km)", 
+        int(input.SunDistance *  0.6214), int(input.SunDistance))
+    output.SunDiameter = fmt.Sprintf("%.2f", input.SunDiameter)
+    output.NextNewMoon = input.NextNewMoon.Format(timeLayout)
+    output.NextFullMoon = input.NextFullMoon.Format((timeLayout))
+
+    return output
+}
 
 func get_minimal_template() string {
     minimal_template := `<!doctype html>
@@ -20,8 +57,11 @@ func get_minimal_template() string {
     <meta property="og:description" content="moon phase">
 </head>
 <body>
-    <h1>Moon Phase for {{.Date}}
-    <b>{{.Phase}}
+    <h1>Moon Phase for {{.Date}}</h1>
+    <b>{{.Phase}}</b>
+    <table>
+        <tr><td>Illumination:</td><td>{{.Illumination}}</td></tr>
+    </table>
 </body>
 </html>
 `
@@ -35,7 +75,8 @@ func moonHtmlHandler(w http.ResponseWriter, r *http.Request, phase MoonDatePhase
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
-    err = tmpl.Execute(w, phase)
+    tmplData := PrepareData(phase)
+    err = tmpl.Execute(w, tmplData)
     if err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
     }

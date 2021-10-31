@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/fcgi"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/araddon/dateparse"
@@ -57,6 +58,10 @@ func moonHandler(w http.ResponseWriter, r *http.Request) {
     varStr := ""
     for key, value := range vars {
         varStr += key + "=" + value + ", "
+    }
+    queryParams := r.URL.Query()
+    for key, value := range queryParams {
+        varStr += key + "=" + strings.Join(value, ",") + ", "
     }
     results.Vars = varStr
 

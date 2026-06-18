@@ -45,8 +45,15 @@ The process writes logs to `info.log` in the working directory.
 When no date is provided, the service uses the current time.
 
 The date path parameter is parsed with
-[`dateparse.ParseAny`](https://pkg.go.dev/github.com/araddon/dateparse), so
-inputs such as `2026-06-18` or `June 18, 2026` are accepted.
+[`dateparse`](https://pkg.go.dev/github.com/araddon/dateparse), so inputs such
+as `2026-06-18` or `June 18, 2026` are accepted.
+Date-only inputs are interpreted as noon in `America/Chicago` by default. Add a
+`tz`, `TZ`, or `timezone` query parameter with an IANA timezone name to use a
+different timezone:
+
+```text
+/moon.fcgi/moon/2026-06-18?tz=America/New_York
+```
 
 Example response fields include:
 

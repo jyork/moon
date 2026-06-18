@@ -8,44 +8,44 @@ import (
 )
 
 type PhaseTemplateData struct {
-    Date         string `json:"date"`
-    Phase        string `json:"phase"`
-    Illumination string `json:"Illumination"`
-    Age          string `json:"Age"`
-    Distance     string `json:"Distance"`
-    Diameter     string `json:"Diameter"`
-    SunDistance  string `json:"SunDistance"`
-    SunDiameter  string `json:"SunDiameter"`
-    NextNewMoon  string `json:"NextNewMoon"`
-    NextFullMoon string `json:"NextFullMoon"`
-    ZodiacSign   string `json:"ZodiacSign"`
+	Date         string `json:"date"`
+	Phase        string `json:"phase"`
+	Illumination string `json:"Illumination"`
+	Age          string `json:"Age"`
+	Distance     string `json:"Distance"`
+	Diameter     string `json:"Diameter"`
+	SunDistance  string `json:"SunDistance"`
+	SunDiameter  string `json:"SunDiameter"`
+	NextNewMoon  string `json:"NextNewMoon"`
+	NextFullMoon string `json:"NextFullMoon"`
+	ZodiacSign   string `json:"ZodiacSign"`
 }
 
 const (
-    dateLayout = "January 2, 2006"
-    timeLayout = "January 2, 2006 at 12:04"
+	dateLayout = "January 2, 2006"
+	timeLayout = "January 2, 2006 at 15:04"
 )
 
 func PrepareData(input MoonDatePhase) PhaseTemplateData {
-    output := PhaseTemplateData{Phase: input.Phase}
-    output.Date = input.Date.Format(dateLayout)
-    output.Illumination = fmt.Sprintf("%d%% of the surface", int(input.Illumination * 100))
-    output.Age = fmt.Sprintf("%.1f days", input.Age)
-    output.Distance = fmt.Sprintf("%d miles (%d km)", 
-        int(input.Distance *  0.6214), int(input.Distance))
-    output.Diameter = fmt.Sprintf("%.2f", input.Diameter)
-    output.SunDistance = fmt.Sprintf("%d miles (%d km)", 
-        int(input.SunDistance *  0.6214), int(input.SunDistance))
-    output.SunDiameter = fmt.Sprintf("%.2f", input.SunDiameter)
-    output.NextNewMoon = input.NextNewMoon.Format(timeLayout)
-    output.NextFullMoon = input.NextFullMoon.Format((timeLayout))
-    output.ZodiacSign = strings.Title(input.ZodiacSign)
+	output := PhaseTemplateData{Phase: input.Phase}
+	output.Date = input.Date.Format(dateLayout)
+	output.Illumination = fmt.Sprintf("%d%% of the surface", int(input.Illumination*100))
+	output.Age = fmt.Sprintf("%.1f days", input.Age)
+	output.Distance = fmt.Sprintf("%d miles (%d km)",
+		int(input.Distance*0.6214), int(input.Distance))
+	output.Diameter = fmt.Sprintf("%.2f", input.Diameter)
+	output.SunDistance = fmt.Sprintf("%d miles (%d km)",
+		int(input.SunDistance*0.6214), int(input.SunDistance))
+	output.SunDiameter = fmt.Sprintf("%.2f", input.SunDiameter)
+	output.NextNewMoon = input.NextNewMoon.Format(timeLayout)
+	output.NextFullMoon = input.NextFullMoon.Format((timeLayout))
+	output.ZodiacSign = strings.Title(input.ZodiacSign)
 
-    return output
+	return output
 }
 
 func get_minimal_template() string {
-    minimal_template := `<!doctype html>
+	minimal_template := `<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -75,19 +75,19 @@ func get_minimal_template() string {
 </body>
 </html>
 `
-    return minimal_template
+	return minimal_template
 }
 
 func moonHtmlHandler(w http.ResponseWriter, r *http.Request, phase MoonDatePhase) {
-    tmpl := template.New("minimal")
-    tmpl, err := tmpl.Parse(get_minimal_template())
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
-    tmplData := PrepareData(phase)
-    err = tmpl.Execute(w, tmplData)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-    }
+	tmpl := template.New("minimal")
+	tmpl, err := tmpl.Parse(get_minimal_template())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	tmplData := PrepareData(phase)
+	err = tmpl.Execute(w, tmplData)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
